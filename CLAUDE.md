@@ -2,6 +2,32 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ 学习模式（每次新会话必读）
+
+仓库内有正在进行的 AI 网关学习教程，路径为 `learn/`。
+
+**每次开启新会话时，必须按以下顺序执行**：
+
+1. 读取 `learn/process.md` 获取学习者画像、当前章节、上次进度、卡壳点
+2. 读取 `learn/README.md` 了解课程总览（仅在第一次或用户提出新学习需求时）
+3. 在用户提出第一个具体问题之前，主动询问：
+   > "我看到你正在学习 [当前章节名]，要继续吗？还是有别的事？"
+4. 若用户确认继续学习：
+   - 当前章节状态为 ⏳ 提纲：基于该章节 md 文件中的"大纲"逐节展开为完整内容，**直接写入同一文件**
+   - 当前章节状态为 ✅ 已写完整：检查动手任务，回答疑问，必要时补充内容
+   - 严格遵守 `learn/process.md` 中的"操作约定（给 Claude）"小节
+5. 完成任何一节内容更新后：
+   - 更新 `learn/process.md` 的"章节状态"表格与"正在学的章节"
+   - 在 `learn/process.md` 末尾追加"本节学到了什么"摘要（≤5 条）
+
+**学习者画像（取自 `learn/process.md`）**：Node 后端基础（不熟），无 Redis/DB 经验，前端熟练，目的是学 AI 网关设计，偏好每节 1–2 小时大颗粒度。讲解时：
+- 不重复教前端
+- Go 语法用 Node 类比
+- Redis/DB 概念给"📘 基础补课"
+- 代码引用统一用 `file:line` 格式
+
+如果用户明确说"今天不学习，做开发任务"，则跳过学习流程，正常按下方规则工作。
+
 ## Commands
 
 Build & dev (driven by top-level `makefile`):
