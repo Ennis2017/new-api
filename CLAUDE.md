@@ -1,4 +1,30 @@
-# CLAUDE.md — Project Conventions for new-api
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Commands
+
+Build & dev (driven by top-level `makefile`):
+
+- `make dev-web` — start default frontend dev server (`web/default`, Rsbuild on bun)
+- `make dev-web-classic` — start classic frontend dev server (`web/classic`, Vite)
+- `make dev-api` — start backend dependencies via `docker-compose.dev.yml`
+- `make dev` — runs `dev-api` + `dev-web` together
+- `make build-frontend` / `make build-frontend-classic` / `make build-all-frontends`
+- `make start-backend` — `go run main.go` (backend serves built frontend assets)
+- `go build -o new-api` — production backend build
+- `go test ./...` — run all Go tests; single test: `go test ./path/to/pkg -run TestName -v`
+
+Frontend (`cd web/default`, all via bun):
+
+- `bun run dev` / `bun run build` / `bun run build:check` (tsc + rsbuild)
+- `bun run typecheck` — `tsc -b`
+- `bun run lint` — ESLint; `bun run format` / `format:check` — Prettier
+- `bun run i18n:sync` — sync i18n keys across locale JSONs
+- `bun run knip` — unused code/exports check
+- `bun run copyright:check` / `bun run copyright` — license header tooling
+
+Runtime entry: `main.go` boots Gin, runs DB migrations, mounts routers in `router/`, and serves the embedded built frontend.
 
 ## Overview
 

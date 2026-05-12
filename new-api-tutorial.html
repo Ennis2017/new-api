@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>New API 项目教程 - AI 模型中转站搭建指南</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --code-bg: #1e293b;
+    --code-text: #e2e8f0;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0;
+  }
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    padding: 60px 20px;
+    text-align: center;
+  }
+  header h1 { font-size: 2.5rem; margin-bottom: 12px; }
+  header p { font-size: 1.1rem; opacity: 0.95; }
+  .badges { margin-top: 18px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+  }
+  main {
+    max-width: 960px;
+    margin: -30px auto 40px;
+    padding: 0 20px;
+  }
+  section {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  h2 {
+    font-size: 1.6rem;
+    color: var(--primary-dark);
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+  }
+  h3 {
+    font-size: 1.2rem;
+    color: var(--text);
+    margin: 20px 0 12px;
+  }
+  p { margin-bottom: 12px; }
+  ul, ol { margin: 12px 0 12px 24px; }
+  li { margin-bottom: 6px; }
+  code {
+    background: #f1f5f9;
+    color: #db2777;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+    font-size: 0.9em;
+  }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 14px 0;
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+  pre code { background: transparent; color: inherit; padding: 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 0.92rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: #f1f5f9;
+    font-weight: 600;
+    color: var(--text);
+  }
+  tr:hover td { background: #fafbfc; }
+  .alert {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin: 16px 0;
+    border-left: 4px solid;
+  }
+  .alert-info { background: #eff6ff; border-color: var(--primary); }
+  .alert-warning { background: #fffbeb; border-color: var(--warning); }
+  .alert-danger { background: #fef2f2; border-color: var(--danger); }
+  .alert strong { display: block; margin-bottom: 4px; }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .feature-card {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    padding: 16px;
+    border-radius: 8px;
+  }
+  .feature-card h4 {
+    color: var(--primary);
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+  .feature-card p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+  .toc {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 24px;
+  }
+  .toc a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+  .toc a:hover { text-decoration: underline; }
+  a { color: var(--primary); }
+  footer {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--primary);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    margin-right: 6px;
+  }
+  .tag-warning { background: var(--warning); }
+  .tag-success { background: var(--success); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>New API 项目教程</h1>
+  <p>统一 AI 模型网关 / 中转站搭建指南</p>
+  <div class="badges">
+    <span class="badge">Go</span>
+    <span class="badge">AGPL-3.0</span>
+    <span class="badge">Docker</span>
+    <span class="badge">MySQL / SQLite / PostgreSQL</span>
+  </div>
+</header>
+
+<main>
+
+  <section class="toc">
+    <h2 style="border:none;padding:0;margin-bottom:10px;font-size:1.2rem;">📑 目录</h2>
+    <ul style="list-style:none;margin-left:0;">
+      <li>1. <a href="#intro">项目简介</a></li>
+      <li>2. <a href="#features">核心功能</a></li>
+      <li>3. <a href="#models">支持的模型与接口</a></li>
+      <li>4. <a href="#tech">技术栈</a></li>
+      <li>5. <a href="#deploy">部署方式</a></li>
+      <li>6. <a href="#config">配置说明</a></li>
+      <li>7. <a href="#usage">初始化与使用</a></li>
+      <li>8. <a href="#faq">常见问题</a></li>
+      <li>9. <a href="#links">相关链接</a></li>
+    </ul>
+  </section>
+
+  <section id="intro">
+    <h2>1. 项目简介</h2>
+    <p><strong>New API</strong> 是一个开源的、统一的 AI 模型网关与资产管理系统（"A unified AI model hub for aggregation & distribution"），常被用作 <strong>AI API 中转站</strong>。它基于知名项目 <code>One API</code> 二次开发，兼容 One API 的数据库结构。</p>
+    <p>项目地址：<a href="https://github.com/QuantumNous/new-api" target="_blank">https://github.com/QuantumNous/new-api</a></p>
+
+    <div class="alert alert-info">
+      <strong>💡 典型应用场景</strong>
+      个人或企业聚合 OpenAI、Claude、Gemini 等多家厂商 API，用统一 OpenAI 兼容协议对外分发，方便计费、限流、权限管理。
+    </div>
+  </section>
+
+  <section id="features">
+    <h2>2. 核心功能</h2>
+    <div class="feature-grid">
+      <div class="feature-card"><h4>🎨 现代化 UI</h4><p>响应式管理后台，支持简中、繁中、英、法、日多语言</p></div>
+      <div class="feature-card"><h4>📊 数据仪表板</h4><p>使用统计、费用分析、调用日志可视化</p></div>
+      <div class="feature-card"><h4>🔐 权限管理</h4><p>用户分组、Token 分组、模型可见性控制</p></div>
+      <div class="feature-card"><h4>💰 在线充值</h4><p>支持 EPay、Stripe 支付通道</p></div>
+      <div class="feature-card"><h4>⚙️ 按量计费</h4><p>Pay-per-use 定价 + 缓存命中计费</p></div>
+      <div class="feature-card"><h4>🔑 多方登录</h4><p>Discord、LinuxDO、Telegram、OIDC</p></div>
+      <div class="feature-card"><h4>🔁 智能路由</h4><p>自动重试、失败转移、用户级限流</p></div>
+      <div class="feature-card"><h4>🔄 格式转换</h4><p>OpenAI ⇄ Claude、OpenAI → Gemini 等</p></div>
+    </div>
+  </section>
+
+  <section id="models">
+    <h2>3. 支持的模型与接口</h2>
+
+    <h3>支持的模型厂商</h3>
+    <ul>
+      <li>OpenAI 及所有 OpenAI 兼容模型</li>
+      <li>Anthropic Claude（Messages 格式）</li>
+      <li>Google Gemini</li>
+      <li>Midjourney-Proxy（绘图）</li>
+      <li>Suno API（音乐生成）</li>
+      <li>Cohere、Jina（Rerank 重排序）</li>
+      <li>自定义模型渠道</li>
+    </ul>
+
+    <h3>支持的接口类型</h3>
+    <p>
+      <span class="tag">Chat Completions</span>
+      <span class="tag">Responses</span>
+      <span class="tag">Image</span>
+      <span class="tag">Audio</span>
+      <span class="tag">Video</span>
+      <span class="tag">Embeddings</span>
+      <span class="tag">Rerank</span>
+      <span class="tag">Realtime</span>
+      <span class="tag">Claude Chat</span>
+      <span class="tag">Gemini Chat</span>
+    </p>
+  </section>
+
+  <section id="tech">
+    <h2>4. 技术栈</h2>
+    <table>
+      <tr><th>层级</th><th>技术</th></tr>
+      <tr><td>后端语言</td><td>Go (100%)</td></tr>
+      <tr><td>依赖管理</td><td>Go Modules (<code>go.mod</code>)</td></tr>
+      <tr><td>数据库</td><td>SQLite / MySQL ≥ 5.7.8 / PostgreSQL ≥ 9.6</td></tr>
+      <tr><td>缓存</td><td>Redis（推荐）/ 内存缓存</td></tr>
+      <tr><td>前端</td><td>现代 Web UI（已编译打包进二进制）</td></tr>
+      <tr><td>容器</td><td>Docker / Docker Compose</td></tr>
+    </table>
+  </section>
+
+  <section id="deploy">
+    <h2>5. 部署方式</h2>
+
+    <h3>方式一：Docker Compose（推荐）</h3>
+<pre><code>git clone https://github.com/QuantumNous/new-api.git
+cd new-api
+docker-compose up -d</code></pre>
+
+    <h3>方式二：Docker 命令 - SQLite 版（最简单）</h3>
+<pre><code>docker run --name new-api -d --restart always \
+  -p 3000:3000 \
+  -e TZ=Asia/Shanghai \
+  -v ./data:/data \
+  calciumion/new-api:latest</code></pre>
+
+    <h3>方式三：Docker 命令 - MySQL 版（生产推荐）</h3>
+<pre><code>docker run --name new-api -d --restart always \
+  -p 3000:3000 \
+  -e SQL_DSN="root:123456@tcp(localhost:3306)/oneapi" \
+  -e REDIS_CONN_STRING="redis://localhost:6379" \
+  -e SESSION_SECRET="你的随机字符串" \
+  -e CRYPTO_SECRET="你的加密密钥" \
+  -e TZ=Asia/Shanghai \
+  -v ./data:/data \
+  calciumion/new-api:latest</code></pre>
+
+    <h3>方式四：宝塔面板</h3>
+    <p>宝塔面板软件商店搜索 <code>new-api</code> 一键安装。</p>
+
+    <h3>方式五：源码编译</h3>
+<pre><code>git clone https://github.com/QuantumNous/new-api.git
+cd new-api
+go mod download
+go build -o new-api
+./new-api --port 3000</code></pre>
+
+    <div class="alert alert-warning">
+      <strong>⚠️ 注意</strong>
+      多机集群部署时，<code>SESSION_SECRET</code> 必须统一设置；启用 Redis 时 <code>CRYPTO_SECRET</code> 必填。
+    </div>
+  </section>
+
+  <section id="config">
+    <h2>6. 配置说明</h2>
+
+    <h3>核心环境变量</h3>
+    <table>
+      <tr><th>变量名</th><th>说明</th><th>默认值</th></tr>
+      <tr><td><code>SESSION_SECRET</code></td><td>会话密钥（多机部署必填）</td><td>—</td></tr>
+      <tr><td><code>CRYPTO_SECRET</code></td><td>加密密钥（用 Redis 时必填）</td><td>—</td></tr>
+      <tr><td><code>SQL_DSN</code></td><td>数据库连接串</td><td>SQLite</td></tr>
+      <tr><td><code>REDIS_CONN_STRING</code></td><td>Redis 连接串</td><td>—</td></tr>
+      <tr><td><code>STREAMING_TIMEOUT</code></td><td>流式响应超时（秒）</td><td>300</td></tr>
+      <tr><td><code>MAX_REQUEST_BODY_MB</code></td><td>最大请求体大小（MB）</td><td>32</td></tr>
+      <tr><td><code>AZURE_DEFAULT_API_VERSION</code></td><td>Azure API 版本</td><td>2025-04-01-preview</td></tr>
+      <tr><td><code>ERROR_LOG_ENABLED</code></td><td>是否记录错误日志</td><td>false</td></tr>
+      <tr><td><code>MEMORY_CACHE_ENABLED</code></td><td>是否启用内存缓存</td><td>false</td></tr>
+      <tr><td><code>TZ</code></td><td>时区</td><td>—</td></tr>
+    </table>
+
+    <h3>数据库 DSN 示例</h3>
+<pre><code># MySQL
+SQL_DSN="root:password@tcp(127.0.0.1:3306)/oneapi"
+
+# PostgreSQL
+SQL_DSN="postgres://user:pass@127.0.0.1:5432/oneapi?sslmode=disable"
+
+# SQLite（不设置 SQL_DSN 时自动用 SQLite，文件存 /data 目录）</code></pre>
+
+    <h3>默认服务信息</h3>
+    <table>
+      <tr><th>项目</th><th>值</th></tr>
+      <tr><td>默认端口</td><td><code>3000</code></td></tr>
+      <tr><td>访问地址</td><td><a href="http://localhost:3000" target="_blank">http://localhost:3000</a></td></tr>
+      <tr><td>数据卷</td><td><code>/data</code>（SQLite 文件 + 日志）</td></tr>
+      <tr><td>初始管理员</td><td>首次访问 Web 页面注册第一个账号即为超级管理员</td></tr>
+    </table>
+  </section>
+
+  <section id="usage">
+    <h2>7. 初始化与使用</h2>
+
+    <ol>
+      <li>启动容器后，浏览器打开 <code>http://服务器IP:3000</code></li>
+      <li>注册第一个账号（自动获得 <strong>超级管理员</strong> 权限）</li>
+      <li>进入 <strong>渠道</strong> 页面，添加上游 API（OpenAI / Claude / Gemini 等），填入官方 Key</li>
+      <li>测试渠道是否连通（"测试"按钮）</li>
+      <li>进入 <strong>令牌</strong> 页面，创建分发 Token（即给用户用的中转 Key）</li>
+      <li>调用方式：将原 OpenAI 请求中的
+        <ul>
+          <li><code>base_url</code> 改成 <code>https://你的域名/v1</code></li>
+          <li><code>api_key</code> 改成 New API 生成的令牌</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h3>客户端调用示例（OpenAI Python SDK）</h3>
+<pre><code>from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-你的-new-api-令牌",
+    base_url="https://你的域名/v1"
+)
+
+resp = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "你好"}]
+)
+print(resp.choices[0].message.content)</code></pre>
+  </section>
+
+  <section id="faq">
+    <h2>8. 常见问题</h2>
+
+    <div class="alert alert-info">
+      <strong>Q: 与 One API 有什么区别？</strong>
+      A: New API 基于 One API 二次开发，UI 更现代、支持更多新模型（Claude Messages、Gemini、Suno 等）、新增按量计费与缓存计费、数据库兼容。
+    </div>
+
+    <div class="alert alert-warning">
+      <strong>Q: 必须用 Redis 吗？</strong>
+      A: 不必须。但生产环境强烈推荐，可大幅提升性能与并发能力。启用 Redis 时必须设置 <code>CRYPTO_SECRET</code>。
+    </div>
+
+    <div class="alert alert-danger">
+      <strong>Q: 许可证限制？</strong>
+      A: 遵循 <strong>AGPL-3.0</strong>，二次开发对外服务必须开源衍生代码，且保留原作者署名与项目链接。
+    </div>
+  </section>
+
+  <section id="links">
+    <h2>9. 相关链接</h2>
+    <table>
+      <tr><th>资源</th><th>地址</th></tr>
+      <tr><td>GitHub 仓库</td><td><a href="https://github.com/QuantumNous/new-api" target="_blank">github.com/QuantumNous/new-api</a></td></tr>
+      <tr><td>官方文档</td><td><a href="https://docs.newapi.pro/en/docs" target="_blank">docs.newapi.pro</a></td></tr>
+      <tr><td>官方网站</td><td><a href="https://www.newapi.ai" target="_blank">www.newapi.ai</a></td></tr>
+      <tr><td>Docker 镜像</td><td><code>calciumion/new-api:latest</code></td></tr>
+      <tr><td>上游项目</td><td>One API（MIT 协议）</td></tr>
+      <tr><td>辅助工具</td><td>neko-api-key-tool、new-api-horizon</td></tr>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  <p>New API 教程 · 基于官方 README 整理 · 仅供学习参考</p>
+</footer>
+
+</body>
+</html>
